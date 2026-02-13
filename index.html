@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hola</title>
+<style>
+  * { margin: 0; padding: 0; }
+  body { overflow: hidden; background: #111; height: 100vh; }
+  #hola {
+    position: absolute;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    color: #fff;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+<div id="hola">Hola</div>
+<script>
+  const el = document.getElementById('hola');
+
+  let x = 100, y = 100;
+  let vx = 2.5, vy = 1.8;
+  let size = 48;
+  let sizeDir = 0.5;
+  const minSize = 20, maxSize = 120;
+
+  function step() {
+    x += vx;
+    y += vy;
+    size += sizeDir;
+
+    if (size >= maxSize || size <= minSize) sizeDir *= -1;
+
+    el.style.fontSize = size + 'px';
+
+    const w = el.offsetWidth;
+    const h = el.offsetHeight;
+    const maxX = window.innerWidth - w;
+    const maxY = window.innerHeight - h;
+
+    if (x <= 0) { x = 0; vx *= -1; }
+    if (x >= maxX) { x = maxX; vx *= -1; }
+    if (y <= 0) { y = 0; vy *= -1; }
+    if (y >= maxY) { y = maxY; vy *= -1; }
+
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+
+    requestAnimationFrame(step);
+  }
+
+  step();
+</script>
+</body>
+</html>
