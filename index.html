@@ -3,56 +3,288 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hola</title>
+<title>Q tal</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; }
-  body { overflow: hidden; background: #111; height: 100vh; }
-  #hola {
-    position: absolute;
-    font-family: Arial, sans-serif;
-    font-weight: bold;
-    color: #fff;
-    white-space: nowrap;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    overflow: hidden;
+    background-color: #000;
+    background-image: radial-gradient(#333 10%, transparent 10%), radial-gradient(#333 10%, transparent 10%);
+    background-size: 30px 30px;
+    background-position: 0 0, 15px 15px;
+    height: 100vh;
+    width: 100vw;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.5s ease;
   }
+
+  body.show-modal {
+    background-color: #f39ac6;
+    background-image: radial-gradient(#e0779f 10%, transparent 10%), radial-gradient(#e0779f 10%, transparent 10%);
+  }
+
+  #bg-gif {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  #start-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  #start-screen span {
+    color: #fff;
+    font-size: 24px;
+    font-family: 'Fredoka', sans-serif;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  #chat-container {
+    position: relative;
+    width: 90%;
+    max-width: 450px;
+    height: 75vh;
+    display: flex;
+    flex-direction: column;
+    background: #ffb6d5;
+    z-index: 8;
+    border-radius: 25px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    overflow: hidden;
+    opacity: 0;
+    animation: slideUp 0.6s ease;
+  }
+
+  .chat-header {
+    background: #25d366;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 22px;
+  }
+
+  .chat-messages {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: #e5ddd5;
+    background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+  }
+
+  .message.gif-message img { width: 100%; max-width: 280px; border-radius: 15px; }
+
+  .message-bubble {
+    background: #fff;
+    padding: 15px 25px;
+    border-radius: 20px;
+    border-top-left-radius: 4px;
+    max-width: 85%;
+    font-size: 26px;
+    font-weight: 800;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  }
+
+  #overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #overlay.visible { display: flex; }
+
+  #modal {
+    background: rgba(255, 182, 213, 0.93);
+    backdrop-filter: blur(10px);
+    border-radius: 35px;
+    padding: 20px;
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: scale(0.5);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  }
+
+  #modal.show { transform: scale(1); opacity: 1; }
+
+  .gif-container { width: 100%; margin-bottom: 15px; border-radius: 20px; overflow: hidden; }
+  .gif-container img { width: 100%; height: auto; display: block; border-radius: 20px; }
+
+  h2 { font-size: 28px; color: #ff4081; margin-bottom: 15px; font-family: 'Fredoka', sans-serif; }
+
+  .buttons { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; }
+
+  .btn { padding: 15px 40px; font-size: 20px; font-weight: 900; border: none; border-radius: 50px; cursor: pointer; transition: 0.2s; width: 80%; max-width: 250px; }
+  #btn-si { background: #4caf50; color: white; position: relative; z-index: 1001; }
+  #btn-no { background: #f44336; color: white; z-index: 1000; }
+
+  .heart { position: fixed; font-size: 30px; top: -50px; animation: fall linear forwards; z-index: 1001; }
+
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+  @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 </style>
 </head>
 <body>
-<div id="hola">Hola</div>
+
+<div id="start-screen"><span>Toca para empezar</span></div>
+
+<img id="bg-gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExa2NpdTZmZXM5Mm5ja3U5NTB1bGxscXNyb25qbWh0YXliaDUycnRodyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/105C2a2ieQtW00/giphy.gif" alt="Background">
+
+<div id="chat-container">
+  <div class="chat-header">Catu ❤️</div>
+  <div class="chat-messages">
+    <div class="message gif-message">
+      <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExZmN3c2o5em41aWd6cTRhOHhkNWQ4eWh4aW82bXdtdmo0MGJhMDVhdiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3og0IQCfsZXScpvKhi/giphy.gif" alt="Catia gif">
+    </div>
+    <div class="message">
+      <div class="message-bubble" id="hola"></div>
+    </div>
+  </div>
+</div>
+
+<div id="overlay">
+  <div id="modal">
+    <div class="gif-container">
+      <img id="main-gif" src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHExaDJqcWswN2hvbjY3bzZlc3lsYms2aHI2YTc0dWdwa29mdGd4cSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/16MIZjjRcUT6g/giphy.gif" alt="Friends GIF">
+    </div>
+    <h2 id="titulo">Querés ser mi San Valentín?🌷🌹</h2>
+    <div class="buttons">
+      <button class="btn" id="btn-si">SIIII🥰</button>
+      <button class="btn" id="btn-no">NAOO🏃‍♂️</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  const el = document.getElementById('hola');
+  const $ = id => document.getElementById(id);
+  const el = $('hola');
+  const overlay = $('overlay');
+  const modal = $('modal');
+  const btnNo = $('btn-no');
+  const btnSi = $('btn-si');
+  const chatContainer = $('chat-container');
+  const gifMsg = document.querySelector('.gif-message');
+  const textMsg = document.querySelector('.message-bubble').parentElement;
+  let audioCtx;
 
-  let x = 100, y = 100;
-  let vx = 2.5, vy = 1.8;
-  let size = 48;
-  let sizeDir = 0.5;
-  const minSize = 20, maxSize = 120;
+  gifMsg.style.opacity = '0';
+  textMsg.style.opacity = '0';
 
-  function step() {
-    x += vx;
-    y += vy;
-    size += sizeDir;
-
-    if (size >= maxSize || size <= minSize) sizeDir *= -1;
-
-    el.style.fontSize = size + 'px';
-
-    const w = el.offsetWidth;
-    const h = el.offsetHeight;
-    const maxX = window.innerWidth - w;
-    const maxY = window.innerHeight - h;
-
-    if (x <= 0) { x = 0; vx *= -1; }
-    if (x >= maxX) { x = maxX; vx *= -1; }
-    if (y <= 0) { y = 0; vy *= -1; }
-    if (y >= maxY) { y = maxY; vy *= -1; }
-
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
-
-    requestAnimationFrame(step);
+  function playSound(type, freq1, freq2, duration) {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq1, audioCtx.currentTime);
+    osc.frequency.setValueAtTime(freq2, audioCtx.currentTime + 0.06);
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + duration);
   }
 
-  step();
+  function showElement(element) {
+    element.style.transition = 'opacity 0.3s';
+    element.style.opacity = '1';
+  }
+
+  const fullText = 'HOLAAAAA CATIAAA👋🥰🥰🥰🥰🥰🥰';
+  let charIndex = 0;
+
+  function typeEffect() {
+    if (charIndex < fullText.length) {
+      el.textContent += fullText[charIndex];
+      charIndex++;
+      setTimeout(typeEffect, 80);
+    }
+  }
+
+  $('start-screen').addEventListener('click', () => {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    $('start-screen').style.display = 'none';
+
+    chatContainer.style.transition = 'opacity 0.5s';
+    chatContainer.style.opacity = '1';
+
+    setTimeout(() => { showElement(gifMsg); playSound('sine', 860, 1100, 0.2); }, 1500);
+    setTimeout(() => { showElement(textMsg); playSound('sine', 860, 1100, 0.2); typeEffect(); }, 3500);
+
+    setTimeout(() => {
+      chatContainer.style.opacity = '0';
+      setTimeout(() => {
+        chatContainer.style.display = 'none';
+        document.body.classList.add('show-modal');
+        overlay.classList.add('visible');
+        setTimeout(() => modal.classList.add('show'), 100);
+      }, 500);
+    }, 7000);
+  });
+
+  function huir() {
+    playSound('square', 150, 100, 0.3);
+    const margin = 30;
+    const maxX = window.innerWidth - btnNo.offsetWidth - margin;
+    const maxY = window.innerHeight - btnNo.offsetHeight - margin;
+    btnNo.style.position = 'fixed';
+    btnNo.style.left = (margin + Math.random() * (maxX - margin)) + 'px';
+    btnNo.style.top = (margin + Math.random() * (maxY - margin)) + 'px';
+  }
+
+  btnNo.addEventListener('click', huir);
+  btnNo.addEventListener('touchstart', (e) => { e.preventDefault(); huir(); });
+
+  btnSi.addEventListener('click', () => {
+    $('titulo').innerHTML = "SIIIIII❤️🥰🥰🥰🥰";
+    $('main-gif').src = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcTlhczZsM240cnhiOWl5bTJwNzFvbmdjaGMzajB1bjYyOWlnejc3aSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/8QbwUh40Hl96yMgvOx/giphy.gif";
+    btnNo.style.display = 'none';
+    btnSi.style.display = 'none';
+    new Audio('si.mp3').play();
+
+    for (let i = 0; i < 60; i++) {
+      setTimeout(() => {
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.innerHTML = "❤️";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = (Math.random() * 2 + 2) + "s";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 4000);
+      }, i * 100);
+    }
+
+    setTimeout(() => {
+      window.location.href = 'https://youtube.com/shorts/E6fDCSyKUjk?si=XcZVVTHaJJy1fymz';
+    }, 8000);
+  });
 </script>
 </body>
 </html>
