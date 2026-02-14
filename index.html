@@ -194,6 +194,8 @@
   const gifMsg = document.querySelector('.gif-message');
   const textMsg = document.querySelector('.message-bubble').parentElement;
   let audioCtx;
+  const bgMusic = new Audio('background.mp3');
+  bgMusic.loop = true;
 
   gifMsg.style.opacity = '0';
   textMsg.style.opacity = '0';
@@ -231,6 +233,7 @@
   $('start-screen').addEventListener('click', () => {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     $('start-screen').style.display = 'none';
+    bgMusic.play();
 
     chatContainer.style.transition = 'opacity 0.5s';
     chatContainer.style.opacity = '1';
@@ -267,6 +270,7 @@
     $('main-gif').src = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcTlhczZsM240cnhiOWl5bTJwNzFvbmdjaGMzajB1bjYyOWlnejc3aSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/8QbwUh40Hl96yMgvOx/giphy.gif";
     btnNo.style.display = 'none';
     btnSi.style.display = 'none';
+    bgMusic.pause();
     new Audio('si.mp3').play();
 
     for (let i = 0; i < 60; i++) {
